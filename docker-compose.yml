@@ -1,0 +1,51 @@
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: task-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: taskuser
+      POSTGRES_PASSWORD: taskpass
+      POSTGRES_DB: taskdb
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U taskuser -d taskdb"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  api:
+    build: .
+    container_name: task-api
+    restart: unless-stopped
+    environment:
+      DATABASE_URL: postgresql://taskuser:taskpass@db:5432/taskdb
+      PORT: 3000
+      JWT_SECRET: change-me-in-local-dev
+      JWT_EXPIRES_IN: 1d
+      AUTH_EMAIL: admin@task.local
+      AUTH_PASSWORD: password123
+      AUTH_NAME: Task Admin
+    ports:
+      - "3000:3000"
+    depends_on:
+      db:
+        condition: service_healthy
+
+  web:
+    build:
+      context: ./web
+    container_name: task-web
+    restart: unless-stopped
+    environment:
+      VITE_API_URL: http://api:3000
+    ports:
+      - "5173:5173"
+    depends_on:
+      - api
+
+volumes:
+  db_data:
