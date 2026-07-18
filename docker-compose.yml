@@ -22,7 +22,7 @@ services:
     container_name: task-api
     restart: unless-stopped
     environment:
-      DATABASE_URL: postgresql://taskuser:taskpass@db:5432/taskdb
+      DATABASE_URL: postgresql://neondb_owner:npg_WziXpA2GLMV9@ep-long-wildflower-avtwvq73-pooler.c-11.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require
       PORT: 3000
       JWT_SECRET: change-me-in-local-dev
       JWT_EXPIRES_IN: 1d
