@@ -5,6 +5,7 @@ COPY package*.json ./
 RUN npm install
 
 COPY prisma ./prisma
+COPY prisma.config.ts ./
 RUN npx prisma generate
 
 
@@ -12,4 +13,4 @@ COPY src ./src
 
 EXPOSE 3000
 
-CMD ["sh", "-c", "npx prisma db push --skip-generate --accept-data-loss && node src/index.js"]
+CMD ["sh", "-c", "npx prisma db push --accept-data-loss && node src/index.js"]
